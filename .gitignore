@@ -1,0 +1,5 @@
+dist
+*.wac
+*.wav
+wac2wav_old.pyx
+cygwin1.dll
