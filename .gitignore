@@ -3,3 +3,6 @@ dist
 *.wav
 wac2wav_old.pyx
 cygwin1.dll
+.ropeproject
+build/
+*.egg-info

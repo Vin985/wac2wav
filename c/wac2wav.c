@@ -210,14 +210,14 @@ int wac2wav_c(char *srcfile, char *destfile)
 
         if (W.filetbl[0] == NULL) {
           fprintf(stderr, "%s: File not found\n", srcfile);
-          exit(2);
+          return 2;
         }
 
         // Parse WAC header and validate supported formats
         if ((sz = READ(&W, hdr, 24)) != 24)
         {
                 fprintf(stderr, "%s: Unexpected eof\n", srcfile);
-                exit(1);
+                return 1;
         }
 
         // Verify "magic" header
@@ -228,7 +228,7 @@ int wac2wav_c(char *srcfile, char *destfile)
                )
         {
                 fprintf(stderr, "%s: Input not a WAC file\n", srcfile);
-                exit(1);
+                return 1;
         }
 
         // Check version
@@ -236,7 +236,7 @@ int wac2wav_c(char *srcfile, char *destfile)
         if (W.version > 4)
         {
                 fprintf(stderr, "%s: Input version %d not supported\n", srcfile, W.version);
-                exit(1);
+                return 1;
         }
 
         // Read channel count and frame size
@@ -248,14 +248,14 @@ int wac2wav_c(char *srcfile, char *destfile)
         if (W.channelcount * W.framesize != 256)
         {
                 fprintf(stderr, "%s: Unsupported block size %d\n", srcfile,W.channelcount*W.framesize);
-                exit(1);
+                return 1;
         }
 
         // All Wildlife Acoustics WAC files have 1 or 2 channels
         if (W.channelcount > 2)
         {
                 fprintf(stderr, "%s: Unsupported channel count %d\n", srcfile, W.channelcount);
-                exit(1);
+                return 1;
         }
 
         // Read flags
@@ -268,7 +268,7 @@ int wac2wav_c(char *srcfile, char *destfile)
         if (W.flags & 0x10)
         {
                 fprintf(stderr, "%s: Triggered WAC files not supported\n", srcfile);
-                exit(1);
+                return 1;
         }
 
         // Parse additional fields from the WAC header
@@ -284,7 +284,7 @@ int wac2wav_c(char *srcfile, char *destfile)
                 if ((sz = READ(&W, hdr, 4)) != 4)
                 {
                         fprintf(stderr, "%s: Unexpected EOF\n", srcfile);
-                        exit(1);
+                        return 1;
                 }
         }
 
@@ -345,8 +345,11 @@ int wac2wav_c(char *srcfile, char *destfile)
         }
 
         // All done
+        fclose(W.filetbl[0]);
+        fclose(W.filetbl[1]);
         fprintf(stderr, "\r\n");
-        exit(0);
+        //exit(0);
+        return 0;
 }
 
 // Read bits:
